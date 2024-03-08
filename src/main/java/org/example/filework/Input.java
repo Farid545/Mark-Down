@@ -41,4 +41,12 @@ public class Input {
 
     }
 
+    private static File createFileByPath(String filePath) throws FileNotFoundException {
+        File file = new File(filePath);
+
+        if (!file.exists())
+            throw new FileNotFoundException();
+
+        return file;
+    }
 }
