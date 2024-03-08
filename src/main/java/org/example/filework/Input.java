@@ -1,0 +1,49 @@
+package org.example.filework;
+
+import org.example.constant.Constants;
+import org.example.enums.MessageCodes;
+import org.example.exception.InvalidFileFormatException;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Input {
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void markdownPath() {
+        String filePath = "";
+
+        System.out.println("*** Формат введення файлу - .txt ***");
+        System.out.print("Введіть шлях до файлу: ");
+        filePath = scanner.next();
+
+        Pattern pattern = Pattern.compile(Constants.FILE_TYPE);
+        Matcher matcher = pattern.matcher(filePath);
+
+        if (filePath.equalsIgnoreCase("exit"))
+            System.exit(1);
+
+        try {
+            if (matcher.find()) {
+
+
+            } else
+                throw new InvalidFileFormatException(MessageCodes.NOT_FOUND_FILE);
+        } catch (InvalidFileFormatException e) {
+            markdownPath();
+        }
+
+    }
+
+    private static File createFileByPath(String filePath) throws FileNotFoundException {
+        File file = new File(filePath);
+
+        if (!file.exists())
+            throw new FileNotFoundException();
+
+        return file;
+    }
+}
