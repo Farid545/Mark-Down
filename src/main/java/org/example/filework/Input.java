@@ -3,6 +3,7 @@ package org.example.filework;
 import org.example.constant.Constants;
 import org.example.enums.MessageCodes;
 import org.example.exception.InvalidFileFormatException;
+import org.example.exception.InvalidTextFormatException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,7 +14,7 @@ import java.util.regex.Pattern;
 public class Input {
     private static Scanner scanner = new Scanner(System.in);
 
-    public static void markdownPath() {
+    public static void markdownPath() throws InvalidTextFormatException {
         String filePath = "";
 
         System.out.println("*** Формат введення файлу - .txt ***");
@@ -28,12 +29,14 @@ public class Input {
 
         try {
             if (matcher.find()) {
-
+                FileProceed.fileProcessing(filePath);
 
             } else
                 throw new InvalidFileFormatException(MessageCodes.NOT_FOUND_FILE);
         } catch (InvalidFileFormatException e) {
             markdownPath();
+        } catch (InvalidTextFormatException e) {
+            throw new InvalidTextFormatException(MessageCodes.INVALID_TEXT_FORMAT);
         }
 
     }
