@@ -24,7 +24,7 @@ public class Input {
         Pattern pattern = Pattern.compile(Constants.FILE_TYPE);
         Matcher matcher = pattern.matcher(filePath);
 
-        if (filePath.equalsIgnoreCase("exit"))
+        if (filePath.equalsIgnoreCase(Constants.EXIT))
             System.exit(1);
 
         try {
@@ -39,14 +39,5 @@ public class Input {
             throw new InvalidTextFormatException(MessageCodes.INVALID_TEXT_FORMAT);
         }
 
-    }
-
-    private static File createFileByPath(String filePath) throws FileNotFoundException {
-        File file = new File(filePath);
-
-        if (!file.exists())
-            throw new FileNotFoundException();
-
-        return file;
     }
 }
