@@ -5,8 +5,6 @@ import org.example.enums.MessageCodes;
 import org.example.exception.InvalidFileFormatException;
 import org.example.exception.InvalidTextFormatException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,8 +15,8 @@ public class Input {
     public static void markdownPath() throws InvalidTextFormatException {
         String filePath = "";
 
-        System.out.println("*** Формат введення файлу - .txt ***");
-        System.out.print("Введіть шлях до файлу: ");
+        System.out.println("*** The file format - .txt ***");
+        System.out.print("Enter the file path: ");
         filePath = scanner.next();
 
         Pattern pattern = Pattern.compile(Constants.FILE_TYPE);

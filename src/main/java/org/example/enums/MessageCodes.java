@@ -7,8 +7,8 @@ import lombok.Getter;
 @Getter
 public enum MessageCodes {
     NOT_FOUND_FILE(1L, "\n----------------------------------------------------------------" +
-            "\nФормат файлу не співпадає, використовуйте .txt формат\n" +
-            "Повторіть спробу або використайте слово 'exit' для виходу з програми\n" +
+            "\nThe file format is wrong! Please, use the .txt format!\n" +
+            "Try It again or just enter 'exit' to leave the app\n" +
             "----------------------------------------------------------------\n\n"),
     INVALID_TEXT_FORMAT(2L, "Error: invalid markdown ");
 
