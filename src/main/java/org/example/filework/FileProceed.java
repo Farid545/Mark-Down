@@ -22,8 +22,6 @@ public class FileProceed {
     public static void fileProcessing(String filePath) throws InvalidTextFormatException {
         fillTheListOfMarkdowns();
         readFileToString(filePath);
-        readMarkdownText(Constants.P_TEXT_START, Constants.P_TEXT_END,
-                " <p>$2", "$1</p> ");
         readMarkdownText(Constants.BOLD_TEXT_START, Constants.BOLD_TEXT_END,
                 " <b>$2", "$1</b> "); // BOLD
         readMarkdownText(Constants.ITALIC_TEXT_START, Constants.ITALIC_TEXT_END,
@@ -63,13 +61,6 @@ public class FileProceed {
             throw new InvalidTextFormatException(MessageCodes.INVALID_TEXT_FORMAT);
     }
 
-    private static void replaceForParagraph(int startCounter, int endCounter, String regex, String replaceTo) throws InvalidTextFormatException {
-        if (startCounter == endCounter)
-            content = content.replace(regex, replaceTo);
-        else
-            throw new InvalidTextFormatException(MessageCodes.INVALID_TEXT_FORMAT);
-    }
-
     private static void readMarkdownText(String regexStart, String regexEnd, String replaceStart, String replaceEnd) throws InvalidTextFormatException {
         Pattern patternStart = Pattern.compile(regexStart);
         Pattern patternEnd = Pattern.compile(regexEnd);
@@ -83,14 +74,8 @@ public class FileProceed {
         matcher = patternEnd.matcher(content);
         int endCounter = findReegax(matcher);
 
-        if (!replaceStart.equals(" <p>$2")) {
-            checkTheError(startCounter, endCounter, regexStart, replaceStart);
-            checkTheError(startCounter, endCounter, regexEnd, replaceEnd);
-        } else {
-            replaceForParagraph(startCounter, endCounter, regexStart, replaceStart);
-            replaceForParagraph(startCounter, endCounter, regexStart, replaceStart);
-        }
-
+        checkTheError(startCounter, endCounter, regexStart, replaceStart);
+        checkTheError(startCounter, endCounter, regexEnd, replaceEnd);
     }
 
     private static int findReegax(Matcher matcher) {

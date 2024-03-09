@@ -24,11 +24,6 @@ public class Constants {
     public static String PRE_TEXT_START = "(\\s|\\.|\\,)\\`\\`\\`((?:\\w)|`|\\*|\\.|\\,)";
     public static String PRE_TEXT_END = "((?:\\w)|`|\\*|\\.|\\,)\\`\\`\\`(\\s|\\.|\\,)";
 
-    // PARAGRAPH TEXT
-
-    public static String P_TEXT_START = "((?:\\w)|\\,|\\.)\\n\\n";
-    public static String P_TEXT_END = "\\n\\n((?:\\w)|\\,|\\.)";
-
 //    \s\`((?:\w)|`|\*{2}|_|`{3})(.*?)(`{3}|_|\*{2}|`|(?:\w))\`\s
 
     // KEY WORDS
