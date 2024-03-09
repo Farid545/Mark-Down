@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,6 +35,8 @@ public class FileProceed {
 
         readParagraph(Constants.P_TEXT);
         insertTextBetweenPreTags(preformatedTexts);
+
+        validateTags();
 
         System.out.println(content);
     }
@@ -146,5 +149,31 @@ public class FileProceed {
         content = result.toString();
     }
 
+    public static void validateTags() {
+        Stack<String> stack = new Stack<>();
+
+        for (int i = 0; i < content.length(); i++) {
+            if (content.charAt(i) == '<') {
+                int closingTagIndex = content.indexOf('>', i);
+                if (closingTagIndex == -1)
+                    throw new IllegalArgumentException("Invalid tag structure.");
+
+                String tag = content.substring(i, closingTagIndex + 1);
+
+                if (tag.startsWith("</")) {
+                    String openTag = stack.pop();
+                    if (!tag.substring(2, tag.length() - 1).equals(openTag.substring(1, openTag.length() - 1)))
+                        throw new IllegalArgumentException("Invalid nesting of tags: " + openTag + " and " + tag);
+                } else {
+                    stack.push(tag);
+                }
+
+                i = closingTagIndex;
+            }
+        }
+
+        if (!stack.isEmpty())
+            throw new IllegalArgumentException("Unclosed tags: " + stack);
+    }
 
 }
