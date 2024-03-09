@@ -11,18 +11,29 @@ public class Constants {
     // BOLD TEXT
     public static String BOLD_TEXT_START = "(\\s|\\.|\\,)\\*\\*((?:\\w)|\\,|\\.)";
     public static String BOLD_TEXT_END = "((?:\\w)|\\,|\\.)\\*\\*(\\s|\\.|\\,)";
+    public static String BOLD = "<b>(.*?)</b>";
 
     // ITALIC TEXT
-    public static String ITALIC_TEXT_START = "(\\s|\\.|\\,)\\_((?:\\w)|\\,|\\.)";
-    public static String ITALIC_TEXT_END = "((?:\\w)|\\,|\\.)\\_(\\s|\\.|\\,)";
+    public static String ITALIC_TEXT_START = "(\\s|\\.|\\,)\\_((?:\\w)|\\,|\\.|\\*)";
+    public static String ITALIC_TEXT_END = "((?:\\w)|\\,|\\.|\\*)\\_(\\s|\\.|\\,)";
+    public static String ITALIC = "<i>(.*?)</i>";
 
     // MONO TEXT
     public static String MONO_TEXT_START = "(\\s|\\.|\\,)\\`((?:\\w)|\\,|\\.)";
     public static String MONO_TEXT_END = "((?:\\w)|\\,|\\.)\\`(\\s|\\.|\\,)";
+    public static String MONO = "<tt>(.*?)</tt>";
 
     // PRE TEXT
     public static String PRE_TEXT_START = "(\\s|\\.|\\,)\\`\\`\\`((?:\\w)|`|\\*|\\.|\\,)";
     public static String PRE_TEXT_END = "((?:\\w)|`|\\*|\\.|\\,)\\`\\`\\`(\\s|\\.|\\,)";
+
+    public static String PRE = "<pre>(.*?)</pre>";
+
+    // PARAGRAPH TEXT
+
+    public static String P_TEXT_START = "((?:\\w)|\\,|\\.)\\n\\n";
+    public static String P_TEXT_END = "\\n\\n((?:\\w)|\\,|\\.)";
+    public static String P_TEXT = "(.*?)(?:\\R\\R|\\R$|$)";
 
 //    \s\`((?:\w)|`|\*{2}|_|`{3})(.*?)(`{3}|_|\*{2}|`|(?:\w))\`\s
 

@@ -3,6 +3,7 @@ package org.example.filework;
 import org.example.constant.Constants;
 import org.example.enums.MessageCodes;
 import org.example.exception.InvalidTextFormatException;
+import org.example.util.FileUtility;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,20 +17,23 @@ import java.util.regex.Pattern;
 public class FileProceed {
 
     private static String content = "";
-    private static List<String> regexes = new ArrayList<>();
 
 
     public static void fileProcessing(String filePath) throws InvalidTextFormatException {
-        fillTheListOfMarkdowns();
         readFileToString(filePath);
+        readMarkdownText(Constants.PRE_TEXT_START, Constants.PRE_TEXT_END,
+                " <pre>$2", "$1</pre> ");
+        List<String> preformatedTexts =  extractTextBetweenPreTags();
+
         readMarkdownText(Constants.BOLD_TEXT_START, Constants.BOLD_TEXT_END,
                 " <b>$2", "$1</b> "); // BOLD
         readMarkdownText(Constants.ITALIC_TEXT_START, Constants.ITALIC_TEXT_END,
                 " <i>$2", "$1</i> "); // ITALIC
         readMarkdownText(Constants.MONO_TEXT_START, Constants.MONO_TEXT_END,
                 " <tt>$2", "$1</tt> "); // MONO
-        readMarkdownText(Constants.PRE_TEXT_START, Constants.PRE_TEXT_END,
-                " <pre>$2", "$1</pre> ");
+
+        readParagraph(Constants.P_TEXT);
+        insertTextBetweenPreTags(preformatedTexts);
 
         System.out.println(content);
     }
@@ -45,15 +49,6 @@ public class FileProceed {
         }
     }
 
-    private static void fillTheListOfMarkdowns() {
-        regexes.add(Constants.BOLD_TEXT_START);
-        regexes.add(Constants.BOLD_TEXT_END);
-        regexes.add(Constants.ITALIC_TEXT_START);
-        regexes.add(Constants.ITALIC_TEXT_END);
-        regexes.add(Constants.MONO_TEXT_START);
-        regexes.add(Constants.MONO_TEXT_END);
-    }
-
     private static void checkTheError(int startCounter, int endCounter, String regex, String replaceTo) throws InvalidTextFormatException {
         if (startCounter == endCounter)
             content = content.replaceAll(regex, replaceTo);
@@ -61,17 +56,30 @@ public class FileProceed {
             throw new InvalidTextFormatException(MessageCodes.INVALID_TEXT_FORMAT);
     }
 
+    private static void readParagraph(String regex) {
+        Matcher matcher = FileUtility.getMatcherFromPattern(content, regex);
+
+        StringBuilder result = new StringBuilder();
+        while (matcher.find()) {
+            String paragraph = matcher.group().trim(); // Видаляємо зайві пробіли
+            if (!paragraph.isEmpty()) {
+                result.append("<p>").append(paragraph).append("</p>").append("\n");
+            }
+        }
+
+        content = result.toString();
+    }
+
+
     private static void readMarkdownText(String regexStart, String regexEnd, String replaceStart, String replaceEnd) throws InvalidTextFormatException {
-        Pattern patternStart = Pattern.compile(regexStart);
-        Pattern patternEnd = Pattern.compile(regexEnd);
         Matcher matcher;
 
         // Для відкриття
-        matcher = patternStart.matcher(content);
+        matcher = FileUtility.getMatcherFromPattern(content, regexStart);
         int startCounter = findReegax(matcher);
 
         // Для закриття
-        matcher = patternEnd.matcher(content);
+        matcher = FileUtility.getMatcherFromPattern(content, regexStart);
         int endCounter = findReegax(matcher);
 
         checkTheError(startCounter, endCounter, regexStart, replaceStart);
@@ -80,10 +88,63 @@ public class FileProceed {
 
     private static int findReegax(Matcher matcher) {
         int counter = 0;
-        while (matcher.find())
-            counter++;
+        while (matcher.find()) {
+            if (!checkTagPositionInPRE(matcher.start()))
+                counter++;
+        }
 
         return counter;
     }
+
+    public static boolean checkTagPositionInPRE(int tag) {
+        Matcher matcher = FileUtility.getMatcherFromPattern(content, Constants.PRE);
+
+        while (matcher.find()) {
+            int startPreTag = matcher.start(); // Початкова позиція тегу <pre>
+            int endPreTag = matcher.end(); // Кінцева позиція тегу <pre>
+            int startEndPreTag = content.indexOf("</pre>", endPreTag); // Початкова позиція тегу </pre> після початку тексту
+
+            if (tag > startPreTag && tag < startEndPreTag) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public static List<String> extractTextBetweenPreTags() {
+        List<String> extractedTexts = new ArrayList<>();
+
+        Matcher preMatcher = FileUtility.getMatcherFromPattern(content, Constants.PRE, Pattern.DOTALL);
+
+        // Пошук та збереження тексту між <pre> та </pre>
+        while (preMatcher.find()) {
+            // Витягуємо текст між тегами <pre> та </pre> та додаємо його до списку
+            extractedTexts.add(preMatcher.group(1));
+        }
+
+        return extractedTexts;
+    }
+
+    public static void insertTextBetweenPreTags(List<String> preformattedTexts) {
+        Matcher preMatcher = FileUtility.getMatcherFromPattern(content, Constants.PRE, Pattern.DOTALL);
+
+        StringBuilder result = new StringBuilder();
+        int index = 0;
+        // Заміна тексту між <pre> та </pre> на відповідні тексти зі списку
+        while (preMatcher.find()) {
+            // Додаємо вихідний текст до моменту, коли знайдено <pre> та </pre>
+            result.append(content, index, preMatcher.start());
+            // Додаємо витягнутий текст
+            if (!preformattedTexts.isEmpty()) {
+                result.append("<pre>").append(preformattedTexts.remove(0)).append("</pre>");
+            }
+            // Оновлюємо індекс для наступного збігу
+            index = preMatcher.end();
+        }
+        // Додаємо залишок вихідного тексту після останнього збігу
+        result.append(content.substring(index));
+
+        content = result.toString();
+    }
+
 
 }
